@@ -2,7 +2,8 @@ namespace StudentScores
 
 type Student =
     {
-        Name: string
+        LastName: string
+        FirstName: string
         Id: string
         Avg: float
         Min: float
@@ -10,9 +11,15 @@ type Student =
     }
 
 module Student =
+    let getNamePart i (s : string) =
+        let elements = s.Split(',')
+        elements.[i].Trim()
+
     let fromString (s : string) =
         let elements = s.Split('\t')
         let name = elements.[0]
+        let lastName = getNamePart 0 name
+        let firstName = getNamePart 1 name
         let id = elements.[1]
         let scores =
             elements
@@ -23,7 +30,8 @@ module Student =
         let min = scores |> Array.min
         let max = scores |> Array.max
         {
-            Name = name
+            LastName = lastName
+            FirstName = firstName
             Id = id
             Avg = avg
             Min = min
@@ -31,7 +39,7 @@ module Student =
         }
 
     let printStudentInfo (student : Student) =
-        printfn "Name: %s\tId: %s\tAvg: %0.1f\tMin: %0.1f\tMax: %0.1f\t" student.Name student.Id student.Avg student.Min student.Max
+        printfn "Name: %s, %s\tId: %s\tAvg: %0.1f\tMin: %0.1f\tMax: %0.1f\t" student.LastName student.FirstName student.Id student.Avg student.Min student.Max
 
     let printStudentCount a =
         let studentCount = a |> Array.length
@@ -45,4 +53,5 @@ module Student =
         printStudentCount studentRows
         studentRows
             |> Array.map fromString
+            |> Array.sortBy (fun student -> student.LastName)
             |> Array.iter printStudentInfo
