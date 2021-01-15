@@ -34,7 +34,9 @@ module Student =
             elements
             |> Array.skip 2
             // |> Array.choose Float.tryFromString
-            |> Array.map (Float.fromStringOr 50.0)
+            // |> Array.map (Float.fromStringOr 50.0)
+            |> Array.map TestResult.fromString
+            |> Array.choose TestResult.tryFromTestResult
         let avg = scores |> Array.average
         let min = scores |> Array.min
         let max = scores |> Array.max
