@@ -49,12 +49,17 @@ module Student =
             Max = max
         }
 
-    let printStudentInfo (student : Student) =
-        printfn "Name: %s, %s\tId: %s\tAvg: %0.1f\tMin: %0.1f\tMax: %0.1f\t" student.LastName student.FirstName student.Id student.Avg student.Min student.Max
-
     let printStudentCount a =
         let studentCount = a |> Array.length
         printfn "Student count is: %i" studentCount
+
+    let printGroupInfo (lastName : string) (students : Student[]) =
+        printfn "%s" (lastName.ToUpperInvariant())
+        students
+        |> Array.sortBy (fun student -> student.FirstName, student.Id)
+        |> Array.iter (fun student ->
+            printfn "\t%20s\tId: %s\tAvg: %0.1f\tMin: %0.1f\tMax: %0.1f\t" student.FirstName student.Id student.Avg student.Min student.Max
+        )
 
     let handleStudents s =
         let studentRows =
@@ -63,6 +68,7 @@ module Student =
             |> Array.skip 1
         printStudentCount studentRows
         studentRows
-            |> Array.map fromString
-            |> Array.sortBy (fun student -> student.LastName)
-            |> Array.iter printStudentInfo
+        |> Array.map fromString
+        |> Array.groupBy (fun student -> student.LastName)
+        |> Array.sortBy fst
+        |> Array.iter (fun (lastName, students) -> printGroupInfo lastName students)
