@@ -49,26 +49,24 @@ module Student =
             Max = max
         }
 
-    let printStudentCount a =
-        let studentCount = a |> Array.length
-        printfn "Student count is: %i" studentCount
-
-    let printGroupInfo (lastName : string) (students : Student[]) =
+    let printGroupInfo (lastName : string) (students : seq<Student>) =
         printfn "%s" (lastName.ToUpperInvariant())
         students
-        |> Array.sortBy (fun student -> student.FirstName, student.Id)
-        |> Array.iter (fun student ->
+        |> Seq.sortBy (fun student -> student.FirstName, student.Id)
+        |> Seq.iter (fun student ->
             printfn "\t%20s\tId: %s\tAvg: %0.1f\tMin: %0.1f\tMax: %0.1f\t" student.FirstName student.Id student.Avg student.Min student.Max
         )
 
     let handleStudents s =
         let studentRows =
             s
-            |> System.IO.File.ReadAllLines
-            |> Array.skip 1
-        printStudentCount studentRows
+            |> System.IO.File.ReadLines
+            |> Seq.skip 1
+            |> Seq.cache
+        let studentCount = studentRows |> Seq.length
+        printfn "Student count is: %i" studentCount
         studentRows
-        |> Array.map fromString
-        |> Array.groupBy (fun student -> student.LastName)
-        |> Array.sortBy fst
-        |> Array.iter (fun (lastName, students) -> printGroupInfo lastName students)
+        |> Seq.map fromString
+        |> Seq.groupBy (fun student -> student.LastName)
+        |> Seq.sortBy fst
+        |> Seq.iter (fun (lastName, students) -> printGroupInfo lastName students)
