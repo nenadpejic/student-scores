@@ -5,12 +5,16 @@ type Student =
         LastName: string
         FirstName: string
         Id: string
+        SchoolName: string
         Avg: float
         Min: float
         Max: float
     }
 
 module Student =
+
+    open System.Collections.Generic
+
     let getNamePart (s : string) =
         let elements = s.Split(',')
         match elements with
@@ -26,13 +30,15 @@ module Student =
                 |}
             | _ -> raise (System.FormatException (sprintf "Invalid name format: %s" s))
 
-    let fromString (s : string) =
+    let fromString (schoolCodes : IDictionary<int, string>) (s : string) =
         let elements = s.Split('\t')
         let name = elements.[0] |> getNamePart
         let id = elements.[1]
+        let schoolCode = elements.[2] |> int
+        let schoolName = schoolCodes.[schoolCode]
         let scores =
             elements
-            |> Array.skip 2
+            |> Array.skip 3
             // |> Array.choose Float.tryFromString
             // |> Array.map (Float.fromStringOr 50.0)
             |> Array.map TestResult.fromString
@@ -44,6 +50,7 @@ module Student =
             LastName = name.LastName
             FirstName = name.FirstName
             Id = id
+            SchoolName = schoolName
             Avg = avg
             Min = min
             Max = max
@@ -54,19 +61,21 @@ module Student =
         students
         |> Seq.sortBy (fun student -> student.FirstName, student.Id)
         |> Seq.iter (fun student ->
-            printfn "\t%20s\tId: %s\tAvg: %0.1f\tMin: %0.1f\tMax: %0.1f\t" student.FirstName student.Id student.Avg student.Min student.Max
+            printfn "\t%20s\tId: %s\tSchool: %s\tAvg: %0.1f\tMin: %0.1f\tMax: %0.1f\t"
+                student.FirstName student.Id student.SchoolName student.Avg student.Min student.Max
         )
 
-    let handleStudents s =
+    let handleStudents schoolCodesFilePath filePath =
         let studentRows =
-            s
+            filePath
             |> System.IO.File.ReadLines
             |> Seq.skip 1
             |> Seq.cache
         let studentCount = studentRows |> Seq.length
         printfn "Student count is: %i" studentCount
+        let schoolCodes = SchoolCodes.load schoolCodesFilePath
         studentRows
-        |> Seq.map fromString
+        |> Seq.map (fromString schoolCodes)
         |> Seq.groupBy (fun student -> student.LastName)
         |> Seq.sortBy fst
         |> Seq.iter (fun (lastName, students) -> printGroupInfo lastName students)
