@@ -30,12 +30,15 @@ module Student =
                 |}
             | _ -> raise (System.FormatException (sprintf "Invalid name format: %s" s))
 
-    let fromString (schoolCodes : IDictionary<int, string>) (s : string) =
+    let fromString (schoolCodes : Map<_,_>) (s : string) =
         let elements = s.Split('\t')
         let name = elements.[0] |> getNamePart
         let id = elements.[1]
-        let schoolCode = elements.[2] |> int
-        let schoolName = schoolCodes.[schoolCode]
+        let schoolCode = elements.[2]
+        let schoolName =
+            schoolCodes
+            |> Map.tryFind schoolCode
+            |> Option.defaultValue "(Unknown)"
         let scores =
             elements
             |> Array.skip 3
@@ -61,7 +64,7 @@ module Student =
         students
         |> Seq.sortBy (fun student -> student.FirstName, student.Id)
         |> Seq.iter (fun student ->
-            printfn "\t%20s\tId: %s\tSchool: %s\tAvg: %0.1f\tMin: %0.1f\tMax: %0.1f\t"
+            printfn "\t%15s\t%s\t%s\tAvg: %0.1f\tMin: %0.1f\tMax: %0.1f\t"
                 student.FirstName student.Id student.SchoolName student.Avg student.Min student.Max
         )
 

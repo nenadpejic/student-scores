@@ -4,7 +4,7 @@ My exploration into F# and the dotnet world.
 
 Run with:
 ```
-dotnet run .\Samples\SchoolCodes.txt .\Samples\StudentScoresSchool.txt
+dotnet run .\Samples\SchoolCodesAlpha.txt  .\Samples\StudentScoresSchoolAlphaCodes.txt
 ```
 
 Concepts learned:
@@ -25,5 +25,6 @@ Concepts learned:
 - Discriminated Union Type
 - Exceptions Handling
 - Generics
-- Sequences
-- Dictionaries
+- Sequences (IEnumerable)
+- Dictionaries (IDictionary)
+- Maps
