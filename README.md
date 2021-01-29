@@ -4,7 +4,7 @@ My exploration into F# and the dotnet world.
 
 Run with:
 ```
-dotnet run StudentScoresAE.txt
+dotnet run .\Samples\SchoolCodes.txt .\Samples\StudentScoresSchool.txt
 ```
 
 Concepts learned:
@@ -23,3 +23,7 @@ Concepts learned:
 - Match Expression and Patern Matching
 - Anonymous Records
 - Discriminated Union Type
+- Exceptions Handling
+- Generics
+- Sequences
+- Dictionaries

@@ -16,6 +16,7 @@ module SchoolCodes =
         //         KeyValuePair.Create(id, name))
         // new Dictionary<int, string>(pairs)
         // new Dictionary<_, _>(pairs)
+
         File.ReadAllLines filePath
         |> Seq.skip 1
         |> Seq.map (fun row ->
@@ -23,4 +24,5 @@ module SchoolCodes =
             let id = elements.[0] |> int
             let name = elements.[1]
             id, name)
-        |> dict
+        // |> dict
+        |> Map.ofSeq
